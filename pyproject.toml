@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "recdin-money-api"
+version = "0.1.0"
+description = ""
+authors = ["matheusburey <matheushburei.99@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+uvicorn = "^0.23.2"
+fastapi = "^0.103.0"
+sqlalchemy = "^2.0.20"
+pydantic = "^2.3.0"
+pydantic-settings = "^2.0.3"
+alembic = "^1.12.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+pylint = "^2.17.5"
+pytest = "^7.4.0"
+pytest-dotenv = "^0.5.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
