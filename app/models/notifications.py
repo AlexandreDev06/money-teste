@@ -1,14 +1,6 @@
 import enum
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -16,10 +8,10 @@ from app.configs.base import Base
 
 
 class NotificationTypeAlert(enum.Enum):
-    waiting_register = 0
-    error_in_consult_register = 1
-    register_finished = 2
-    task_to_do = 3
+    WAITING_REGISTER = 0
+    ERROR_IN_CONSULT_REGISTER = 1
+    REGISTER_FINISHED = 2
+    TASK_TO_DO = 3
 
 
 class Notification(Base):

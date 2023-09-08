@@ -1,29 +1,30 @@
-from sqlalchemy import (
-    Column,
-    DateTime,
-    Integer,
-    ForeignKey,
-    Enum,
-)
-from sqlalchemy.sql import func
 import enum
+
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.configs.base import Base
 
 
 class MotorRunningStatus(enum.Enum):
-    in_progress = 0
-    paused = 1
-    finished = 2
+    """Motor running status"""
+
+    IN_PROGRESS = 0
+    PAUSED = 1
+    FINISHED = 2
 
 
 class MotorType(enum.Enum):
-    enrichment = 1
-    eligibility = 2
+    """Motor type"""
+
+    ENRICHMENT = 1
+    ELIGIBILITY = 2
 
 
 class MotorRunning(Base):
+    """Motor running model"""
+
     __tablename__ = "motor_runnings"
 
     id = Column(Integer, primary_key=True, index=True)
