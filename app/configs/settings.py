@@ -9,6 +9,7 @@ class BaseConfig(BaseSettings):
 
     environment: str
     db_uri: PostgresDsn
+    lawtech_api: str
 
     class Config:
         """Config class"""

@@ -1,3 +1,4 @@
+from app import exceptions
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,5 +14,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.exception_handler(exceptions.CredentialsException)(exceptions.credentials_invalid_exception)
 app.include_router(routers)
