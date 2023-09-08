@@ -8,7 +8,7 @@ class BaseConfig(BaseSettings):
     """Base config"""
 
     environment: str
-    database_uri: PostgresDsn
+    db_uri: PostgresDsn
 
     class Config:
         """Config class"""
