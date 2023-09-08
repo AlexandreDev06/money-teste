@@ -1,6 +1,5 @@
 from functools import lru_cache
 
-from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings
 
 
@@ -8,7 +7,7 @@ class BaseConfig(BaseSettings):
     """Base config"""
 
     environment: str
-    db_uri: PostgresDsn
+    db_uri: str
     lawtech_api: str
 
     class Config:

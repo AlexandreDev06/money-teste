@@ -1,13 +1,6 @@
 import enum
 
-from sqlalchemy import (
-    Column,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -15,25 +8,25 @@ from app.configs.base import Base
 
 
 class TimelinePipelineStatus(enum.Enum):
-    entry = 0
-    enrichment = 1
-    eligibility = 2
-    contact = 3
-    waiting_fill = 4
-    contract = 5
-    general_verification = 6
-    waiting_for_analyzes = 7
-    in_queue = 8
-    waiting_payment = 9
-    completed_with_success = 10
-    completed_with_failure = 11
-    pending_docs = 12
+    ENTRY = 0
+    ENRICHMENT = 1
+    ELIGIBILITY = 2
+    CONTACT = 3
+    WAITING_FILL = 4
+    CONTRACT = 5
+    GENERAL_VERIFICATION = 6
+    WAITING_FOR_ANALYZES = 7
+    IN_QUEUE = 8
+    WAITING_PAYMENT = 9
+    COMPLETED_WITH_SUCCESS = 10
+    COMPLETED_WITH_FAILURE = 11
+    PENDING_DOCS = 12
 
 
 class TimelineSource(enum.Enum):
-    spreadsheet = 0
-    landing_page = 1
-    pending_registration = 2
+    SPREADSHEET = 0
+    LANDING_PAGE = 1
+    PENDING_REGISTRATION = 2
 
 
 class Timeline(Base):

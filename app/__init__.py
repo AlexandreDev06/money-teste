@@ -1,11 +1,11 @@
-from app import exceptions
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.configs.settings import settings
+from app import exceptions as exe
 from app.routes import routers
 
-app = FastAPI(title="Recdin Money Api", version="0.0.1")
+app = FastAPI(title="Recdin Money Api", version="0.5.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,5 +14,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.exception_handler(exceptions.CredentialsException)(exceptions.credentials_invalid_exception)
+
+# Handle data model error
+app.exception_handler(RequestValidationError)(exe.validation_exception_handler)
+app.exception_handler(exe.ValueNotFound)(exe.value_not_found)
+app.exception_handler(exe.CredentialsException)(exe.credentials_invalid_exception)
+
 app.include_router(routers)

@@ -1,6 +1,7 @@
 import enum
 
 from sqlalchemy import (
+    ARRAY,
     Boolean,
     Column,
     DateTime,
@@ -8,7 +9,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    ARRAY,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -17,12 +17,16 @@ from app.configs.base import Base
 
 
 class ClientSource(enum.Enum):
+    """Client source"""
+
     SPREADSHEET = 0
     LANDING_PAGE = 1
     DIRF = 2
 
 
 class ClientPipelineStatus(enum.Enum):
+    """Client pipeline status"""
+
     ENTRY = 13
     ENRICHMENT = 14
     ELIGIBILITY = 15
@@ -39,12 +43,16 @@ class ClientPipelineStatus(enum.Enum):
 
 
 class ClientDocumentType(enum.Enum):
+    """Client document type"""
+
     RG = 0
     CNH = 1
     PEP = 2
 
 
 class ClientSearchIrpfStatus(enum.Enum):
+    """Client search irpf status"""
+
     NOT_SEARCHED = 0
     SEARCHING = 1
     SUCCESS = 2
@@ -52,19 +60,23 @@ class ClientSearchIrpfStatus(enum.Enum):
 
 
 class ClientRegistrationStatus(enum.Enum):
+    """Client registration status"""
+
     PENDING_DOCUMENTS = 0
     FINISHED = 1
 
 
 class Client(Base):
+    """Client model"""
+
     __tablename__ = "clients"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     cpf = Column(String, nullable=False, unique=True)
-    birth_date = Column(String, nullable=False)
+    birth_date = Column(String, nullable=False, default="")
     is_enriched = Column(Boolean, default=False)
-    source = Column(Enum(ClientSource), nullable=False)
+    source = Column(Enum(ClientSource), nullable=False, default="SPREADSHEET")
     mother_name = Column(String)
     document_type = Column(Enum(ClientDocumentType))
     document_file = Column(String)
@@ -82,7 +94,7 @@ class Client(Base):
     agency = Column(String)
     number_account = Column(String)
     code_pix = Column(String)
-    search_irpf_status = Column(Enum(ClientSearchIrpfStatus), default=0)
+    search_irpf_status = Column(Enum(ClientSearchIrpfStatus), default="NOT_SEARCHED")
     document_address = Column(String)
     is_active = Column(Boolean, default=True)
     email_sended_at = Column(DateTime(timezone=True))
@@ -93,3 +105,7 @@ class Client(Base):
 
     operation_id = Column(Integer, ForeignKey("operations.id"))
     operation = relationship("Operation", back_populates="clients")
+    client_operations = relationship("ClientOperation", back_populates="client")
+    notifications = relationship("Notification", back_populates="client")
+    tasks = relationship("Task", back_populates="client")
+    timelines = relationship("Timeline", back_populates="client")
