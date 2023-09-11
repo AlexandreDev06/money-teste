@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import exceptions as exe
 from app.routes import routers
 
-app = FastAPI(title="Recdin Money Api", version="0.5.0")
+app = FastAPI(title="Recdin Money Api", version="0.6.0")
 
 app.add_middleware(
     CORSMiddleware,

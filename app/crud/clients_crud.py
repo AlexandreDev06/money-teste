@@ -18,6 +18,15 @@ class ClientsManager:
             try:
                 conn.session.add_all([Client(**client) for client in data_clients])
                 conn.session.commit()
-            except Exception as e:
+            except Exception as exe:
                 conn.session.rollback()
-                print(e)
+                print(exe)
+
+    async def update(self, client_id: int, data: dict) -> None:
+        with DBConnection() as conn:
+            try:
+                conn.session.query(Client).filter(Client.id == client_id).update(data)
+                conn.session.commit()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
