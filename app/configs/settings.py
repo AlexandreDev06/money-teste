@@ -9,6 +9,9 @@ class BaseConfig(BaseSettings):
     environment: str
     db_uri: str
     lawtech_api: str
+    redis_url: str
+    volpe_url: str
+    volpe_api_key: str
 
     class Config:
         """Config class"""

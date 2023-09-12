@@ -40,3 +40,16 @@ class ClientsManager:
             except Exception as exe:
                 conn.session.rollback()
                 print(exe)
+
+    async def get_by_operation(self, operation_id: int) -> Client:
+        """Get all clients by operation id"""
+        with DBConnection() as conn:
+            try:
+                return (
+                    conn.session.query(Client)
+                    .filter(Client.operation_id == operation_id)
+                    .all()
+                )
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)

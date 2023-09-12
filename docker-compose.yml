@@ -20,9 +20,41 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+      - celery_worker
     hostname: money
     container_name: money
     command: uvicorn app:app --reload --host 0.0.0.0
 
+  celery_worker:
+    build: .
+    image: money-api
+    container_name: celery_worker
+    hostname: celery_worker
+    volumes:
+      - .:/home/app
+    command: celery --app=app.worker.celery worker -E --autoscale=10,1 --loglevel=info --uid=nobody
+    tty: true
+    depends_on:
+      - postgres
+      - redis
+      - flower
+
+  redis:
+    image: redis:7.0.4
+    container_name: redis
+    hostname: redis
+    volumes:
+      - redis:/data
+
+  flower:
+    image: mher/flower:0.9.7
+    container_name: flower
+    command: flower --broker=redis://redis:6379/0 --port=5555
+    hostname: flower
+    ports:
+      - 5555:5555
+    depends_on:
+      - redis
 volumes:
   postgres:
+  redis:

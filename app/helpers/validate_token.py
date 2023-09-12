@@ -5,8 +5,8 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.params import Depends
 from pydantic import BaseModel
 
-oauth = OAuth2PasswordBearer(tokenUrl="/api/v1/login")
 LAWTECH_API = settings.lawtech_api
+oauth = OAuth2PasswordBearer(tokenUrl="http://lawtech-api-st.recdin.com.br/api/v1/login")
 
 
 class Admin(BaseModel):
