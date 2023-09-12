@@ -1,5 +1,4 @@
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 
 from app.configs.database import DBConnection
 from app.models import Operation

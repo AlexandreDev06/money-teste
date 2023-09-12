@@ -99,8 +99,9 @@ class Client(Base):
     is_active = Column(Boolean, default=True)
     email_sended_at = Column(DateTime(timezone=True))
     registration_status = Column(Enum(ClientRegistrationStatus))
+    pipeline_status = Column(Enum(ClientPipelineStatus), default="ENTRY")
 
-    created_at = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     operation_id = Column(Integer, ForeignKey("operations.id"))
