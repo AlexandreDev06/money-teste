@@ -57,4 +57,4 @@ async def create_new_operation(file: UploadFile) -> DefaultResponse:
 
     await ClientsManager().add_multiple_clients(list_clients)
 
-    return {"status": "Success"}
+    return {"status": "success"}

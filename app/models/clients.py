@@ -24,7 +24,7 @@ class ClientSource(enum.Enum):
     DIRF = 2
 
 
-class ClientPipelineStatus(enum.Enum):
+class ClientPipelineStatus(int, enum.Enum):
     """Client pipeline status"""
 
     ENTRY = 13
