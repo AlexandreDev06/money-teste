@@ -1,11 +1,10 @@
-from app.models.motor_runnings import MotorRunningStatus as motor_status
-from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.clients_crud import ClientsManager
-from app.models.clients import Client
-from app.models.motor_runnings import MotorRunning
+from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.external.volpe_api import Volpe
-from app.worker.celery import app
 from app.helpers.run_func_async import run_func_async
+from app.models.clients import ClientPipelineStatus as client_pipeline_status
+from app.models.motor_runnings import MotorRunningStatus as motor_status
+from app.worker.celery import app
 
 
 @app.task(bind=True, name="call_clients_to_enrich")
@@ -48,17 +47,21 @@ async def enrich_client(self, client: dict, motor_id: int):
     emails = Volpe().search_data_volpe("email", volpe_data, True)
     phone_numbers = Volpe().search_data_volpe("home_phone", volpe_data, True)
 
-    await ClientsManager().update(client["id"], {
-        "is_enriched": True,
-        "name": volpe_data["name"],
-        "street": [full_address["address"]],
-        "house_number": [full_address["address_number"]],
-        "district": [full_address["district"]],
-        "city": [full_address["city"]],
-        "state": [full_address["state"]],
-        "cep": [full_address["cep"]],
-        "email": emails,
-        "phone": phone_numbers,
-    })
+    await ClientsManager().update(
+        client["id"],
+        {
+            "is_enriched": True,
+            "name": volpe_data["name"],
+            "street": [full_address["address"]],
+            "house_number": [full_address["address_number"]],
+            "district": [full_address["district"]],
+            "city": [full_address["city"]],
+            "state": [full_address["state"]],
+            "cep": [full_address["cep"]],
+            "email": emails,
+            "phone": phone_numbers,
+            "pipeline_status": client_pipeline_status.ELIGIBILITY,
+        },
+    )
 
     return "Successfuly enriched client"
