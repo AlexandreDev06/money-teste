@@ -15,11 +15,12 @@ class MotorRunningStatus(enum.Enum):
     FINISHED = 2
 
 
-class MotorType(enum.Enum):
+class MotorType(int, enum.Enum):
     """Motor type"""
 
-    ENRICHMENT = 1
-    ELIGIBILITY = 2
+    ENTRY = 1
+    ENRICHMENT = 2
+    ELIGIBILITY = 3
 
 
 class MotorRunning(Base):
@@ -28,8 +29,8 @@ class MotorRunning(Base):
     __tablename__ = "motor_runnings"
 
     id = Column(Integer, primary_key=True, index=True)
-    status = Column(Enum(MotorRunningStatus))
-    motor_type = Column(Enum(MotorType))
+    status = Column(Enum(MotorRunningStatus), default="PAUSED")
+    motor_type = Column(Enum(MotorType), default="ENTRY")
 
     operation_id = Column(Integer, ForeignKey("operations.id"))
     operation = relationship("Operation", back_populates="motor_runnings")

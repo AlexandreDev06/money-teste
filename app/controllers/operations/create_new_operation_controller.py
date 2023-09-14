@@ -5,6 +5,7 @@ import pandas
 from fastapi import Depends, HTTPException, UploadFile
 
 from app.crud.clients_crud import ClientsManager
+from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.operations_crud import OperationsManager
 from app.helpers.validate_token import validate_token
 
@@ -53,6 +54,7 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
 
         if not operation:
             operation = await opr_conn.insert(operation_name)
+            await MotorRunningsManager().insert({"operation_id": operation.id})
 
         list_clients.append({"cpf": re.sub(r'[.\-, ]', '', row["cpf"]), "operation_id": operation.id})
 
