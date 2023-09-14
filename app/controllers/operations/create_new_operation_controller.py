@@ -1,14 +1,15 @@
 import io
+import re
 
 import pandas
-from fastapi import HTTPException, UploadFile
+from fastapi import Depends, HTTPException, UploadFile
 
 from app.crud.clients_crud import ClientsManager
 from app.crud.operations_crud import OperationsManager
-from app.schemas import DefaultResponse
+from app.helpers.validate_token import validate_token
 
 
-async def create_new_operation(file: UploadFile) -> DefaultResponse:
+async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
     """Adds clients by uploading a file.
 
     Args:
@@ -53,7 +54,7 @@ async def create_new_operation(file: UploadFile) -> DefaultResponse:
         if not operation:
             operation = await opr_conn.insert(operation_name)
 
-        list_clients.append({"cpf": row["cpf"], "operation_id": operation.id})
+        list_clients.append({"cpf": re.sub(r'[.\-, ]', '', row["cpf"]), "operation_id": operation.id})
 
     await ClientsManager().add_multiple_clients(list_clients)
 

@@ -1,2 +1,3 @@
 from .get_list_of_stage_controller import get_list_of_clients
+from .get_pipeline_cards_controller import get_pipeline_cards
 from .update_stage_controller import update_stage
