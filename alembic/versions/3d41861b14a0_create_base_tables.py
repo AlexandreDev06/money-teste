@@ -128,7 +128,7 @@ def upgrade() -> None:
         ),
         sa.Column(
             "motor_type",
-            sa.Enum("ENRICHMENT", "ELIGIBILITY", name="motortype"),
+            sa.Enum("ENTRY", "ENRICHMENT", "ELIGIBILITY", name="motortype"),
             nullable=True,
         ),
         sa.Column("operation_id", sa.Integer(), nullable=True),
