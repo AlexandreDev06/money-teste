@@ -1,7 +1,9 @@
 from re import search
 from time import sleep
-from app.configs.settings import settings
+
 import requests
+
+from app.configs.settings import settings
 
 
 class Volpe:
@@ -14,7 +16,9 @@ class Volpe:
         cpf = cpf.replace(".", "").replace("-", "")
         headers = {"Content-Type": "application/json"}
         params = {"serasa": False, "force": force, "api_key": self.api_key}
-        response = requests.get(f"{self.url}data/{cpf}/task", headers=headers, params=params, timeout=20)
+        response = requests.get(
+            f"{self.url}data/{cpf}/task", headers=headers, params=params, timeout=20
+        )
         if response.status_code != 200:
             print(f"Error ao buscar dados no hub Volpe do CPF: {cpf}")
             print(response.status_code)
@@ -27,7 +31,9 @@ class Volpe:
         for _ in range(9):
             sleep(10)
             response = requests.get(
-                f"{self.url}data/{task_id}/check", headers=headers, params={"api_key": self.api_key}
+                f"{self.url}data/{task_id}/check",
+                headers=headers,
+                params={"api_key": self.api_key},
             )
 
             if response.json().get("data"):
@@ -38,12 +44,15 @@ class Volpe:
                 print(response.json()["error"])
                 return None
 
-    def search_data_volpe(self, key: str, data: dict, is_array: bool = False, search_number: int = 0):
+    def search_data_volpe(
+        self, key: str, data: dict, is_array: bool = False, search_number: int = 0
+    ):
         """Search data in the volpe json"""
         full_list = []
 
         # Search data in the different API keywords in the JSON data
         for key_api in ["procob", "assertiva", "direct_data", "serasa"]:
+            print(data)
             full_list += data[key_api][key]
 
         # Return array if is_array is true

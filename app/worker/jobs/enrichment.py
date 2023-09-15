@@ -9,13 +9,13 @@ from app.worker.celery import app
 
 @app.task(bind=True, name="call_clients_to_enrich")
 @run_func_async()
-async def call_clients_to_enrich(self, motor_id: int):
+async def call_clients_to_enrich(_, motor_id: int):
     """Job that will manage all clients able to be enriched."""
     motor = await MotorRunningsManager().get(motor_id)
     if motor.status == mts.PAUSED:
         return "Motor running paused"
 
-    await MotorRunningsManager().update({"id": motor.id, "status": mts.IN_PROGRESS})
+    await MotorRunningsManager().update(motor.id, {"status": mts.IN_PROGRESS})
     clients = await ClientsManager().get_by_pipeline_and_operation(
         ClientPipelineStatus.ENRICHMENT, motor.operation_id
     )
@@ -49,5 +49,5 @@ async def call_clients_to_enrich(self, motor_id: int):
             },
         )
 
-    await MotorRunningsManager().update({"id": motor.id, "status": mts.FINISHED})
+    await MotorRunningsManager().update(motor.id, {"status": mts.FINISHED})
     return "Successfuly called clients to enrich, amount: " + str(len(clients))

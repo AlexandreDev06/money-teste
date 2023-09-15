@@ -58,7 +58,10 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
             await MotorRunningsManager().insert({"operation_id": operation.id})
 
         list_clients.append(
-            {"cpf": re.sub(r"[.\-, ]", "", row["cpf"]), "operation_id": operation.id}
+            {
+                "cpf": re.sub(r"[.\-, ]", "", str(row["cpf"])),
+                "operation_id": operation.id,
+            }
         )
 
     await ClientsManager().add_multiple_clients(list_clients)

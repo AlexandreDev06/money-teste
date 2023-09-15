@@ -1,5 +1,4 @@
 import asyncio
-from functools import wraps
 
 
 def run_func_async():

@@ -1,7 +1,1 @@
-from pydantic import BaseModel
-
-
-class DefaultResponse(BaseModel):
-    """Default response"""
-
-    status: str
+from .responses_schemas import DefaultResponse, HTTPValidationError, response_model
