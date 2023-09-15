@@ -26,28 +26,33 @@ async def call_clients_to_enrich(_, motor_id: int):
 
         if client.is_enriched:
             return "Client already enriched"
+        try:
+            volpe_data = Volpe().search_cpf_data(client.cpf)
+            if not volpe_data:
+                raise "Volpe API instável."
 
-        volpe_data = Volpe().search_cpf_data(client.cpf)
-        full_address = Volpe().search_data_volpe("full_address", volpe_data)
-        emails = Volpe().search_data_volpe("email", volpe_data, True)
-        phone_numbers = Volpe().search_data_volpe("home_phone", volpe_data, True)
+            full_address = Volpe().search_data_volpe("full_address", volpe_data)
+            emails = Volpe().search_data_volpe("email", volpe_data, True)
+            phone_numbers = Volpe().search_data_volpe("home_phone", volpe_data, True)
 
-        await ClientsManager().update(
-            client.id,
-            {
-                "is_enriched": True,
-                "name": volpe_data["name"],
-                "street": [full_address["address"]],
-                "house_number": [full_address["address_number"]],
-                "district": [full_address["district"]],
-                "city": [full_address["city"]],
-                "state": [full_address["state"]],
-                "cep": [full_address["cep"]],
-                "email": emails,
-                "phone": phone_numbers,
-                "pipeline_status": ClientPipelineStatus.ELIGIBILITY,
-            },
-        )
+            await ClientsManager().update(
+                client.id,
+                {
+                    "is_enriched": True,
+                    "name": volpe_data["name"],
+                    "street": [full_address["address"]],
+                    "house_number": [full_address["address_number"]],
+                    "district": [full_address["district"]],
+                    "city": [full_address["city"]],
+                    "state": [full_address["state"]],
+                    "cep": [full_address["cep"]],
+                    "email": emails,
+                    "phone": phone_numbers,
+                    "pipeline_status": ClientPipelineStatus.ELIGIBILITY,
+                },
+            )
+        except Exception as e:
+            print(f"Cliente id:{client.id}. não foi enriquecido. Error: {e}")
 
     await MotorRunningsManager().update(motor.id, {"status": mts.FINISHED})
     return "Successfuly called clients to enrich, amount: " + str(len(clients))
