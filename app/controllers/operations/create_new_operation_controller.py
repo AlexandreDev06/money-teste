@@ -8,6 +8,7 @@ from app.crud.clients_crud import ClientsManager
 from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.operations_crud import OperationsManager
 from app.helpers.validate_token import validate_token
+from app.models.motor_runnings import MotorRunningStatus, MotorType
 
 
 async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
@@ -56,8 +57,19 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
             operation = await opr_conn.insert(operation_name)
             await MotorRunningsManager().insert({"operation_id": operation.id})
 
-        list_clients.append({"cpf": re.sub(r'[.\-, ]', '', row["cpf"]), "operation_id": operation.id})
+        list_clients.append(
+            {"cpf": re.sub(r"[.\-, ]", "", row["cpf"]), "operation_id": operation.id}
+        )
 
     await ClientsManager().add_multiple_clients(list_clients)
+
+    for stage in MotorType:
+        await MotorRunningsManager().insert(
+            {
+                "status": MotorRunningStatus.FINISHED,
+                "motor_type": stage,
+                "operation_id": operation.id,
+            }
+        )
 
     return {"status": "success"}

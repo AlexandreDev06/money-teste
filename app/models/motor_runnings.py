@@ -18,9 +18,9 @@ class MotorRunningStatus(enum.Enum):
 class MotorType(int, enum.Enum):
     """Motor type"""
 
-    ENTRY = 1
-    ENRICHMENT = 2
-    ELIGIBILITY = 3
+    ENTRY = 0
+    ENRICHMENT = 1
+    ELIGIBILITY = 2
 
 
 class MotorRunning(Base):

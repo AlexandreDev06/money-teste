@@ -43,16 +43,6 @@ class ClientsManager:
                 conn.session.rollback()
                 print(exe)
 
-    async def get_by_operation(self, operation_id: int) -> Client:
-        """Get all clients by operation id"""
-        with DBConnection() as conn:
-            try:
-                query = select(Client).where(Client.operation_id == operation_id)
-                return conn.session.scalars(query).all()
-            except Exception as exe:
-                conn.session.rollback()
-                print(exe)
-
     async def get_pipeline_clients(self, page: int, per_page: int = 20) -> dict:
         """Get all clients by pipeline status with pagination"""
         pipeline_clients = {}
@@ -96,3 +86,35 @@ class ClientsManager:
                 print(exe)
 
         return pipeline_clients
+
+    async def get_by_pipeline_and_operation(
+        self, pipeline_status: str, operation_id: int
+    ) -> list[Client]:
+        """Get all clients by pipeline status and operation id"""
+        with DBConnection() as conn:
+            try:
+                query = (
+                    select(Client)
+                    .where(Client.pipeline_status == pipeline_status)
+                    .where(Client.operation_id == operation_id)
+                )
+                return conn.session.scalars(query).all()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
+
+    async def update_all_to_next_stage(self, operation_id: int):
+        """Update all clients to next stage by pipeline_status"""
+        with DBConnection() as conn:
+            try:
+                query = (
+                    update(Client)
+                    .where(Client.pipeline_status == PipelineStatus.ENTRY)
+                    .where(Client.operation_id == operation_id)
+                    .values(pipeline_status=PipelineStatus.ENRICHMENT)
+                )
+                conn.session.execute(query)
+                conn.session.commit()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
