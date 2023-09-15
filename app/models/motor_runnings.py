@@ -15,9 +15,10 @@ class MotorRunningStatus(enum.Enum):
     FINISHED = 2
 
 
-class MotorType(enum.Enum):
+class MotorType(int, enum.Enum):
     """Motor type"""
 
+    ENTRY = 0
     ENRICHMENT = 1
     ELIGIBILITY = 2
 
