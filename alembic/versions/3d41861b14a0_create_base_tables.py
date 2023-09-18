@@ -40,7 +40,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("cpf", sa.String(), nullable=False),
-        sa.Column("birth_date", sa.String(), nullable=False),
+        sa.Column("birth_date", sa.DateTime()),
         sa.Column("is_enriched", sa.Boolean(), nullable=True),
         sa.Column(
             "pipeline_status",

@@ -46,7 +46,7 @@ class Volpe:
 
     def search_data_volpe(
         self, key: str, data: dict, is_array: bool = False, search_number: int = 0
-    ):
+    ) -> list:
         """Search data in the volpe json"""
         full_list = []
 
@@ -58,7 +58,7 @@ class Volpe:
         # Return array if is_array is true
         if is_array:
             rgx = r"@ig|@terra|@uol|@bol|@procob"
-            return set([item for item in full_list if not search(rgx, item)]) or []
+            return list(set([item for item in full_list if not search(rgx, item)]))
 
         # Return the value
         if full_list != []:
@@ -66,4 +66,3 @@ class Volpe:
 
         # If data is null
         print("Error searching " + key + " in the volpe json")
-        return ""

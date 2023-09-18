@@ -12,6 +12,7 @@ class BaseConfig(BaseSettings):
     redis_url: str
     volpe_url: str
     volpe_api_key: str
+    capmonster_api_key: str
 
     class Config:
         """Config class"""

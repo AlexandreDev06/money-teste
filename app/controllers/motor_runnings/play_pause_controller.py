@@ -4,7 +4,7 @@ from app.crud.clients_crud import ClientsManager
 from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.helpers.validate_token import validate_token
 from app.models.motor_runnings import MotorRunning, MotorRunningStatus, MotorType
-from app.worker import call_clients_to_enrich, check_eligibility
+from app.worker import call_clients_to_enrich, start_check_eligibility
 
 
 async def play_pause(
@@ -43,4 +43,4 @@ async def __call_function_by_motor_type__(motor: MotorRunning):
     elif motor.motor_type == MotorType.ENRICHMENT:
         call_clients_to_enrich.delay(motor.id)
     elif motor.motor_type == MotorType.ELIGIBILITY:
-        check_eligibility.delay(motor.id)
+        start_check_eligibility.delay(motor.id)
