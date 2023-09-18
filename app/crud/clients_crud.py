@@ -8,6 +8,16 @@ from app.models.clients import ClientPipelineStatus as PipelineStatus
 class ClientsManager:
     """Clients manager class"""
 
+    async def get(self, client_id: int) -> Client:
+        """Get client by id."""
+        with DBConnection() as conn:
+            try:
+                query = select(Client).where(Client.id == client_id)
+                return conn.session.scalars(query).first()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
+
     async def add_multiple_clients(self, data_clients: list[dict]) -> None:
         """Adds multiple clients to the database.
 
