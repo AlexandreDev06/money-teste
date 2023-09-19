@@ -50,7 +50,7 @@ class ClientOperation(Base):
     refound_amount = Column(Float)
     is_active = Column(Boolean, default=True)
     irpf_situation = Column(String)
-    pipeline_status = Column(Enum(ClientOperationPipelineStatus))
+    pipeline_status = Column(Enum(ClientOperationPipelineStatus), default="ELIGIBILITY")
     cnpj_payer = Column(String)
     name_payer = Column(String)
     previd_official = Column(Integer)
