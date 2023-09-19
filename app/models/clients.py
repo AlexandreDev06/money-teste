@@ -74,7 +74,7 @@ class Client(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     cpf = Column(String, nullable=False, unique=True)
-    birth_date = Column(String, nullable=False, default="")
+    birth_date = Column(DateTime)
     is_enriched = Column(Boolean, default=False)
     source = Column(Enum(ClientSource), nullable=False, default="SPREADSHEET")
     mother_name = Column(String)

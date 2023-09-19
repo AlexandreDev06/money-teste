@@ -55,20 +55,22 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
 
         if not operation:
             operation = await opr_conn.insert(operation_name)
+            for stage in MotorType:
+                await MotorRunningsManager().insert(
+                    {
+                        "status": MotorRunningStatus.FINISHED,
+                        "motor_type": stage,
+                        "operation_id": operation.id,
+                    }
+                )
 
         list_clients.append(
-            {"cpf": re.sub(r"[.\-, ]", "", row["cpf"]), "operation_id": operation.id}
-        )
-
-    await ClientsManager().add_multiple_clients(list_clients)
-
-    for stage in MotorType:
-        await MotorRunningsManager().insert(
             {
-                "status": MotorRunningStatus.FINISHED,
-                "motor_type": stage,
+                "cpf": re.sub(r"[.\-, ]", "", str(row["cpf"])),
                 "operation_id": operation.id,
             }
         )
+
+    await ClientsManager().add_multiple_clients(list_clients)
 
     return {"status": "success"}

@@ -1,11 +1,9 @@
 from fastapi import APIRouter
 
-from app.schemas import DefaultResponse
-
 router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
-async def health_checker() -> DefaultResponse:
+async def health_checker():
     """Health checker endpoint"""
     return {"status": "success"}

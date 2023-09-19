@@ -1,12 +1,13 @@
-from app.configs.settings import settings
-from app.exceptions import CredentialsException
 import requests
-from fastapi.security import OAuth2PasswordBearer
 from fastapi.params import Depends
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 
+from app.configs.settings import settings
+from app.exceptions import CredentialsException
+
 LAWTECH_API = settings.lawtech_api
-oauth = OAuth2PasswordBearer(tokenUrl="http://lawtech-api-st.recdin.com.br/api/v1/login")
+oauth = OAuth2PasswordBearer(tokenUrl=f"{LAWTECH_API}login")
 
 
 class Admin(BaseModel):
@@ -21,8 +22,9 @@ class Admin(BaseModel):
 async def validate_token(token: str = Depends(oauth)) -> Admin:
     try:
         response = requests.get(
-            f"{LAWTECH_API}/valid-token",
+            f"{LAWTECH_API}valid-token",
             headers={"Authorization": f"Bearer {token}"},
+            timeout=30,
         )
     except Exception as e:
         print(e)

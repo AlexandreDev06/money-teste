@@ -12,7 +12,7 @@ async def validation_exception_handler(*_):
         JSONResponse: A JSON response with a 400 status code and an error detail.
     """
     return JSONResponse(
-        status_code=400,
+        status_code=422,
         content={
             "status": "Error",
             "description": "The format of the JSON sent is incorrect",
