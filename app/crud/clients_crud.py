@@ -1,4 +1,5 @@
-from sqlalchemy import select, text, update
+from sqlalchemy import select, update
+from sqlalchemy.orm import joinedload
 
 from app.configs.database import DBConnection
 from app.models import Client, Operation
@@ -16,6 +17,26 @@ class ClientsManager:
                 return conn.session.scalars(query).first()
             except Exception as exe:
                 conn.session.rollback()
+                print(exe)
+
+    async def get_with_details(self, client_id: int) -> Client:
+        """Search for a client by id and return the client with its client_operations and timelines.
+        Args:
+            client_id (int): The client id.
+        """
+        with DBConnection() as conn:
+            try:
+                query = (
+                    select(Client)
+                    .options(
+                        joinedload(Client.client_operations),
+                        joinedload(Client.timelines),
+                    )
+                    .where(Client.id == client_id)
+                )
+
+                return conn.session.scalars(query).unique().first()
+            except Exception as exe:
                 print(exe)
 
     async def add_multiple_clients(self, data_clients: list[dict]) -> None:
