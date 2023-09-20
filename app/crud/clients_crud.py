@@ -1,9 +1,10 @@
-from sqlalchemy import select, update
+from sqlalchemy import insert, select, update
 from sqlalchemy.orm import joinedload
 
 from app.configs.database import DBConnection
 from app.models import Client, Operation
 from app.models.clients import ClientPipelineStatus as PipelineStatus
+from app.models.timelines import Timeline, TimelinePipelineStatus, TimelineSource
 
 
 class ClientsManager:
@@ -144,6 +145,23 @@ class ClientsManager:
                     .where(Client.operation_id == operation_id)
                     .values(pipeline_status=PipelineStatus.ENRICHMENT)
                 )
+                all_clients = (
+                    select(Client)
+                    .where(Client.pipeline_status == PipelineStatus.ENTRY)
+                    .where(Client.operation_id == operation_id)
+                )
+                timelines_query = insert(Timeline).values(
+                    [
+                        {
+                            "client_id": client.id,
+                            "pipeline_status": "ENRICHMENT",
+                            "source": TimelineSource.SPREADSHEET,
+                        }
+                        for client in conn.session.execute(all_clients).scalars().all()
+                    ]
+                )
+
+                conn.session.execute(timelines_query)
                 conn.session.execute(query)
                 conn.session.commit()
             except Exception as exe:

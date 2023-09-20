@@ -2,10 +2,12 @@ from datetime import datetime
 
 from app.crud.clients_crud import ClientsManager
 from app.crud.motor_runnings_crud import MotorRunningsManager
+from app.crud.timelines_crud import TimelineManager
 from app.external.volpe_api import Volpe
 from app.helpers.run_func_async import run_func_async
 from app.models.clients import ClientPipelineStatus
 from app.models.motor_runnings import MotorRunningStatus as mts
+from app.models.timelines import TimelinePipelineStatus, TimelineSource
 from app.worker.celery import app
 
 
@@ -62,6 +64,14 @@ async def call_clients_to_enrich(_, motor_id: int):
                     "birth_date": birth_date,
                     "pipeline_status": ClientPipelineStatus.ELIGIBILITY,
                 },
+            )
+
+            await TimelineManager().insert(
+                {
+                    "client_id": client.id,
+                    "pipeline_status": TimelinePipelineStatus.ELIGIBILITY,
+                    "source": TimelineSource.SPREADSHEET,
+                }
             )
         except Exception as e:
             print(f"Cliente id:{client.id}. não foi enriquecido. Error: {e}")

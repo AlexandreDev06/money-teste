@@ -7,12 +7,16 @@ from app.models.client_operations import ClientOperation
 class ClientOperationsManager:
     """Client operations manager class"""
 
-    async def get_by_client(self, client_id: int) -> ClientOperation:
-        """Get client operation by client id."""
+    async def add_multiple(self, data_list: list[dict]) -> None:
+        """Adds multiple clients to the database.
+
+        Args:
+            clients (List[Client]): The list of clients to be added to the database.
+        """
         with DBConnection() as conn:
             try:
-                query = select(ClientOperation).where(ClientOperation.client_id == client_id)
-                return conn.session.scalars(query).all()
+                conn.session.add_all([ClientOperation(**data) for data in data_list])
+                conn.session.commit()
             except Exception as exe:
                 conn.session.rollback()
                 print(exe)

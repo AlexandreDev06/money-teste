@@ -9,6 +9,7 @@ from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.operations_crud import OperationsManager
 from app.helpers.validate_token import validate_token
 from app.models.motor_runnings import MotorRunningStatus, MotorType
+from app.models.timelines import Timeline
 
 
 async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
@@ -68,6 +69,13 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
             {
                 "cpf": re.sub(r"[.\-, ]", "", str(row["cpf"])),
                 "operation_id": operation.id,
+                "timelines": [
+                    Timeline(
+                        pipeline_status="ENTRY",
+                        text="Cliente inserido.",
+                        source="SPREADSHEET",
+                    )
+                ],
             }
         )
 
