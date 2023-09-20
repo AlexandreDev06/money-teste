@@ -52,7 +52,6 @@ class Volpe:
 
         # Search data in the different API keywords in the JSON data
         for key_api in ["procob", "assertiva", "direct_data", "serasa"]:
-            print(data)
             full_list += data[key_api][key]
 
         # Return array if is_array is true

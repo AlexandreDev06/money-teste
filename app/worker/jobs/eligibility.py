@@ -1,13 +1,15 @@
 from datetime import datetime
 
-from app.crud.client_operation_crud import ClientOperationManager
+from app.crud.client_operations_crud import ClientOperationsManager
 from app.crud.clients_crud import ClientsManager
 from app.crud.motor_runnings_crud import MotorRunningsManager
+from app.crud.timelines_crud import TimelineManager
 from app.external.irpf_situation_service import IrpfSituationService
 from app.helpers.run_func_async import run_func_async
 from app.models.clients import ClientPipelineStatus as Cps
 from app.models.clients import ClientSearchIrpfStatus as Csis
 from app.models.motor_runnings import MotorRunningStatus as Mrs
+from app.models.timelines import TimelinePipelineStatus, TimelineSource
 from app.worker.celery import app
 
 
@@ -62,11 +64,21 @@ async def check_eligibility(_, data_client: dict):
                 "client_id": data_client["id"],
                 "year": data["year"],
                 "irpf_situation": client_res,
+                "search_irpf_status": Csis.SUCCESS,
             }
         )
 
-    await ClientOperationManager().add_multiple(list_clients_operation)
+    await ClientOperationsManager().add_multiple(list_clients_operation)
     await ClientsManager().update(
-        data_client["id"], {"search_irpf_status": Csis.SUCCESS}
+        data_client["id"],
+        {"search_irpf_status": Csis.SUCCESS, "pipeline_status": Cps.CONTACT},
     )
+    await TimelineManager().insert(
+        {
+            "client_id": data_client["id"],
+            "pipeline_status": TimelinePipelineStatus.CONTACT,
+            "source": TimelineSource.SPREADSHEET,
+        }
+    )
+
     return "Successfuly called clients"

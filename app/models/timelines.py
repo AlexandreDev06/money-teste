@@ -33,13 +33,12 @@ class Timeline(Base):
     __tablename__ = "timelines"
 
     id = Column(Integer, primary_key=True, index=True)
-    question = Column(String)
-    answer = Column(String)
+    text = Column(String)
     pipeline_status = Column(Enum(TimelinePipelineStatus))
     sended_at = Column(DateTime(timezone=True))
     source = Column(Enum(TimelineSource))
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     client_id = Column(Integer, ForeignKey("clients.id"))
