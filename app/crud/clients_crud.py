@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 from app.configs.database import DBConnection
 from app.models import Client, Operation
 from app.models.clients import ClientPipelineStatus as PipelineStatus
-from app.models.timelines import Timeline, TimelinePipelineStatus, TimelineSource
+from app.models.timelines import Timeline, TimelineSource
 
 
 class ClientsManager:
@@ -75,7 +75,14 @@ class ClientsManager:
                 conn.session.rollback()
                 print(exe)
 
-    async def get_pipeline_clients(self, page: int, per_page: int = 20) -> dict:
+    async def get_pipeline_clients(
+        self,
+        page: int,
+        per_page: int,
+        order_by: str,
+        order: str,
+        source: list[str],
+    ) -> dict:
         """Get all clients by pipeline status with pagination"""
         pipeline_clients = {}
 
@@ -98,8 +105,14 @@ class ClientsManager:
                         )
                         .join(Client.operation)
                         .where(Client.pipeline_status == status)
+                        .where(Client.source.in_(source))
                         .limit(per_page)
                         .offset((page - 1) * per_page)
+                    )
+                    query = query.order_by(
+                        getattr(Client, order_by).desc()
+                        if order == "DESC"
+                        else getattr(Client, order_by).asc()
                     )
                     results = conn.session.execute(query).all()
 
