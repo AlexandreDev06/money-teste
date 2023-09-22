@@ -2,7 +2,6 @@ from fastapi import Depends
 
 from app.crud.clients_crud import ClientsManager
 from app.helpers.validate_token import validate_token
-from app.models.clients import ClientSource
 
 
 async def get_pipeline_cards(
