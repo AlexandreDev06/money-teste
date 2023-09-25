@@ -31,50 +31,69 @@ async def call_clients_to_enrich(_, motor_id: int):
         if client.is_enriched:
             print("Client already enriched")
             continue
-        try:
-            volpe_data = Volpe().search_cpf_data(client.cpf)
-            if not volpe_data:
-                raise ValueError("Volpe API instável.")
 
-            full_address = Volpe().search_data_volpe("full_address", volpe_data)
-            emails = Volpe().search_data_volpe("email", volpe_data, True)
-            phone_numbers = Volpe().search_data_volpe("home_phone", volpe_data, True)
+        await __enrich_client__(client, ClientPipelineStatus.ELIGIBILITY)
 
-            birth_date = ""
-            if "/" in volpe_data["birth_date"]:
-                birth_date = datetime.strptime(volpe_data["birth_date"], "%d/%m/%Y")
-            elif "-" in volpe_data["birth_date"]:
-                birth_date = datetime.strptime(
-                    volpe_data["birth_date"], "%Y-%m-%d %H:%M:%S"
-                )
-
-            await ClientsManager().update(
-                client.id,
-                {
-                    "is_enriched": True,
-                    "name": volpe_data["name"],
-                    "street": [full_address["address"]],
-                    "house_number": [full_address["address_number"]],
-                    "district": [full_address["district"]],
-                    "city": [full_address["city"]],
-                    "state": [full_address["state"]],
-                    "cep": [full_address["cep"]],
-                    "email": emails,
-                    "phone": phone_numbers,
-                    "birth_date": birth_date,
-                    "pipeline_status": ClientPipelineStatus.ELIGIBILITY,
-                },
-            )
-
-            await TimelineManager().insert(
-                {
-                    "client_id": client.id,
-                    "pipeline_status": TimelinePipelineStatus.ELIGIBILITY,
-                    "source": TimelineSource.SPREADSHEET,
-                }
-            )
-        except Exception as e:
-            print(f"Cliente id:{client.id}. não foi enriquecido. Error: {e}")
+        await TimelineManager().insert(
+            {
+                "client_id": client.id,
+                "pipeline_status": TimelinePipelineStatus.ELIGIBILITY,
+                "source": TimelineSource.SPREADSHEET,
+            }
+        )
 
     await MotorRunningsManager().update(motor.id, {"status": mts.FINISHED})
-    return "Successfuly called clients to enrich, amount: " + str(len(clients))
+    return "Successfully called clients to enrich, amount: " + str(len(clients))
+
+
+@app.task(bind=True, name="enrich_one_client")
+@run_func_async()
+async def enrich_one_client(_, client_id: int):
+    """Enrich one client"""
+    client = await ClientsManager().get(client_id)
+    if not client:
+        return False
+
+    await __enrich_client__(client, None)
+
+    return "Successfully enriched client"
+
+
+async def __enrich_client__(client, pipeline_status):
+    """Enrich a single client"""
+    try:
+        volpe_data = Volpe().search_cpf_data(client.cpf)
+        if not volpe_data:
+            raise ValueError("Volpe API instável.")
+
+        full_address = Volpe().search_data_volpe("full_address", volpe_data)
+        emails = Volpe().search_data_volpe("email", volpe_data, True)
+        phone_numbers = Volpe().search_data_volpe("home_phone", volpe_data, True)
+
+        birth_date = ""
+        if "/" in volpe_data["birth_date"]:
+            birth_date = datetime.strptime(volpe_data["birth_date"], "%d/%m/%Y")
+        elif "-" in volpe_data["birth_date"]:
+            birth_date = datetime.strptime(
+                volpe_data["birth_date"], "%Y-%m-%d %H:%M:%S"
+            )
+
+        await ClientsManager().update(
+            client.id,
+            {
+                "is_enriched": True,
+                "name": volpe_data["name"],
+                "street": [full_address["address"]],
+                "house_number": [full_address["address_number"]],
+                "district": [full_address["district"]],
+                "city": [full_address["city"]],
+                "state": [full_address["state"]],
+                "cep": [full_address["cep"]],
+                "email": emails,
+                "phone": phone_numbers,
+                "birth_date": birth_date,
+                "pipeline_status": pipeline_status,
+            },
+        )
+    except Exception as e:
+        print(f"Cliente id:{client.id}. não foi enriquecido. Error: {e}")

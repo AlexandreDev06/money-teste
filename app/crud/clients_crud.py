@@ -20,6 +20,25 @@ class ClientsManager:
                 conn.session.rollback()
                 print(exe)
 
+    async def insert(self, client_data: dict) -> None:
+        """Insert client."""
+        with DBConnection() as conn:
+            #insert in db an return the id
+            client = Client(**client_data)
+            conn.session.add(client)
+            conn.session.commit()
+            return client
+
+    async def get_client_by(self, field: str, value: str) -> Client:
+        """Get client by field."""
+        with DBConnection() as conn:
+            try:
+                query = select(Client).where(getattr(Client, field) == value)
+                return conn.session.scalars(query).first()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
+
     async def get_with_details(self, client_id: int) -> Client:
         """Search for a client by id and return the client with its client_operations and timelines.
         Args:
