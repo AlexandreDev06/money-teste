@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, UploadFile
 from app.crud.clients_crud import ClientsManager
 from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.operations_crud import OperationsManager
+from app.helpers.cpf import validate_and_clean_cpf
 from app.helpers.validate_token import validate_token
 from app.models.motor_runnings import MotorRunningStatus, MotorType
 from app.models.timelines import Timeline
@@ -64,10 +65,11 @@ async def create_new_operation(file: UploadFile, _=Depends(validate_token)):
                         "operation_id": operation.id,
                     }
                 )
-
+        cpf = re.sub(r"[.\-, ]", "", str(row["cpf"]))
+        cpf = await validate_and_clean_cpf(cpf)
         list_clients.append(
             {
-                "cpf": re.sub(r"[.\-, ]", "", str(row["cpf"])),
+                "cpf": cpf,
                 "operation_id": operation.id,
                 "timelines": [
                     Timeline(
