@@ -22,7 +22,7 @@ class Admin(BaseModel):
 async def validate_token(token: str = Depends(oauth)) -> Admin:
     try:
         response = requests.get(
-            f"{LAWTECH_API}valid-token",
+            f"{LAWTECH_API}validate-token",
             headers={"Authorization": f"Bearer {token}"},
             timeout=30,
         )
