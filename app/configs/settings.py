@@ -13,6 +13,7 @@ class BaseConfig(BaseSettings):
     volpe_url: str
     volpe_api_key: str
     capmonster_api_key: str
+    zap_sign_token: str
 
     class Config:
         """Config class"""
