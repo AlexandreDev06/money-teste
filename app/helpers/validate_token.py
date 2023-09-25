@@ -11,6 +11,8 @@ oauth = OAuth2PasswordBearer(tokenUrl=f"{LAWTECH_API}login")
 
 
 class Admin(BaseModel):
+    """Admin model"""
+
     role: bool
     phone_number: str
     id: int
@@ -20,17 +22,23 @@ class Admin(BaseModel):
 
 
 async def validate_token(token: str = Depends(oauth)) -> Admin:
-    try:
-        response = requests.get(
-            f"{LAWTECH_API}validate-token",
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=30,
-        )
-    except Exception as e:
-        print(e)
-        raise e
+    """Validate the provided token by making an HTTP GET
+    request to the LAWTECH_API's 'valid-token' endpoint.
 
-    if response.status_code == 401:
-        raise CredentialsException()
+    Args:
+        token (str, optional): The token to be validated.
+        Defaults to the result of calling the 'oauth' dependency.
 
-    return response.json()["data"]
+    Returns:
+        Admin: The validated token's data, returned as a JSON object.
+    """
+    response = requests.get(
+        f"{LAWTECH_API}validate-token",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=30,
+    )
+
+    if response.status_code == 200:
+        return response.json()["data"]
+
+    raise CredentialsException()

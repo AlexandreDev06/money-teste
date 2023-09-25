@@ -10,6 +10,7 @@ from sqlalchemy import (
     Integer,
     String,
 )
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -110,3 +111,7 @@ class Client(Base):
     notifications = relationship("Notification", back_populates="client")
     tasks = relationship("Task", back_populates="client")
     timelines = relationship("Timeline", back_populates="client")
+
+    @hybrid_property
+    def full_adress(self):
+        return f"{self.street[0]}, {self.house_number[0]}, {self.district[0]} - {self.cep[0]}"
