@@ -48,11 +48,12 @@ class IrpfSituationService:
         resp = requests.get(
             f"{self.page_link}/{data['cpf']}/{data['year']}/{data['birth_date']}",
             proxies={
-                "http": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/"
+                "http": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
+                "https": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
             },
             headers=headers,
             timeout=30,
-            verify=False,
+            verify="/etc/ssl/certs/zyte-ca.crt",
         )
 
         print(resp.status_code, resp.text)
