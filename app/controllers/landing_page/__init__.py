@@ -1,1 +1,3 @@
+from .get_address_controller import get_address
+from .get_result_client_by_id_controller import get_result_client_by_id
 from .start_consult_controller import start_consult
