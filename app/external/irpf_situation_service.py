@@ -5,7 +5,7 @@ from capmonster_python import CapmonsterException, HCaptchaTask
 class IrpfSituationService:
     """Service to get the IRPF situation using web scraping"""
 
-    page_link = "https://www.restituicao.receita.fazenda.gov.br/servicos-rfb-apprfb-restituicao/apprfb-restituicao/consulta-restituicao"
+    page_link = "https://www.restituicao.receita.fazenda.gov.br"
     website_key = "1e7b8462-5e38-4418-9998-74210d909134"
 
     async def __get_hcaptcha_token(self):
@@ -44,16 +44,16 @@ class IrpfSituationService:
             "token_esuite": "",
             "Connection": "keep-alive",
         }
-
+        url = f"{self.page_link}/servicos-rfb-apprfb-restituicao/apprfb-restituicao/consulta-restituicao"
         resp = requests.get(
-            f"{self.page_link}/{data['cpf']}/{data['year']}/{data['birth_date']}",
+            f"{url}/{data['cpf']}/{data['year']}/{data['birth_date']}",
             proxies={
                 "http": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
                 "https": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
             },
             headers=headers,
             timeout=30,
-            verify="/etc/ssl/certs/zyte-ca.crt",
+            verify=False,
         )
 
         print(resp.status_code, resp.text)

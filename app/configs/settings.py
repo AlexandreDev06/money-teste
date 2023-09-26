@@ -14,6 +14,8 @@ class BaseConfig(BaseSettings):
     volpe_api_key: str
     capmonster_api_key: str
     zap_sign_token: str
+    super_email: str
+    super_password: str
 
     class Config:
         """Config class"""

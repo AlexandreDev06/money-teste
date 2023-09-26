@@ -6,7 +6,7 @@ async def validate_and_clean_cpf(cpf: str):
     cpf = cpf.replace(".", "").replace("-", "")
     if not cpf.isnumeric():
         raise ValueError("CPF inválido.")
-    
+
     if len(cpf) != 11:
         raise ValueError("CPF inválido.")
 
