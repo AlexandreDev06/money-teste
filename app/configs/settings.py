@@ -16,6 +16,9 @@ class BaseConfig(BaseSettings):
     zap_sign_token: str
     super_email: str
     super_password: str
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    aws_bucket_name: str
 
     class Config:
         """Config class"""

@@ -21,6 +21,7 @@ redis = "^5.0.0"
 flower = "^2.0.1"
 celery = "^5.3.4"
 capmonster-python = "^2.4.1"
+boto3 = "^1.28.55"
 
 
 [tool.poetry.group.dev.dependencies]
