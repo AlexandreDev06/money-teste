@@ -6,6 +6,7 @@ from app.crud.motor_runnings_crud import MotorRunningsManager
 from app.crud.timelines_crud import TimelineManager
 from app.external.irpf_situation_service import IrpfSituationService
 from app.helpers.run_func_async import run_func_async
+from app.models.client_operations import ClientOperationSearchIrpfStatus as Cois
 from app.models.clients import ClientPipelineStatus as Cps
 from app.models.clients import ClientSearchIrpfStatus as Csis
 from app.models.motor_runnings import MotorRunningStatus as Mrs
@@ -37,10 +38,10 @@ async def start_check_eligibility(_, motor_id: int):
             "motor_id": motor_id,
         }
         check_eligibility.delay(data_client)
-    return "Successfuly called clients to enrich"
+    return "Successfuly called clients to eligibility"
 
 
-@app.task(bind=True, name="check_eligibility", max_retries=3)
+@app.task(bind=True, name="check_eligibility")
 @run_func_async()
 async def check_eligibility(_, data_client: dict):
     """Job that will manage all clients able to be enriched."""
@@ -64,7 +65,7 @@ async def check_eligibility(_, data_client: dict):
                 "client_id": data_client["id"],
                 "year": data["year"],
                 "irpf_situation": client_res,
-                "search_irpf_status": Csis.SUCCESS,
+                "search_irpf_status": Cois.SUCCESS,
             }
         )
 
