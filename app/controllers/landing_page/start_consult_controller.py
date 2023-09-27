@@ -1,5 +1,4 @@
 from datetime import datetime
-from pdb import set_trace
 
 from app.crud.client_operations_crud import ClientOperationsManager
 from app.crud.clients_crud import ClientsManager

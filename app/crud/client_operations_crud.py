@@ -1,4 +1,4 @@
-from sqlalchemy import select, text, update
+from sqlalchemy import select, update
 
 from app.configs.database import DBConnection
 from app.models.client_operations import ClientOperation

@@ -1,5 +1,3 @@
-from sqlalchemy import select, text, update
-
 from app.configs.database import DBConnection
 from app.models.timelines import Timeline
 
