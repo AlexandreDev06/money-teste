@@ -23,11 +23,15 @@ class ClientsManager:
     async def insert(self, client_data: dict) -> None:
         """Insert client."""
         with DBConnection() as conn:
-            #insert in db an return the id
-            client = Client(**client_data)
-            conn.session.add(client)
-            conn.session.commit()
-            return client
+            # insert the client and return the id
+            try:
+                client = Client(**client_data)
+                conn.session.add(client)
+                conn.session.commit()
+                return client.id
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
 
     async def get_client_by(self, field: str, value: str) -> Client:
         """Get client by field."""
