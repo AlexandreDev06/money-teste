@@ -5,8 +5,9 @@ from app.helpers.validate_token import validate_token
 
 
 async def get_address(client_id: int, _=Depends(validate_token)):
-    """Get client for screen negociation by id.
-    Args: client_id (int): The client id.
+    """Get client for screen negociation by id.\n
+    Args:\n 
+        client_id (int): The client id.
     """
     list_of_address = []
     client = await ClientsManager().get(client_id)

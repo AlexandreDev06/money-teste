@@ -2,8 +2,9 @@ from app.crud.clients_crud import ClientsManager
 
 
 async def get_result_client_by_id(client_id: int):
-    """Get client for screen negociation by id.
-    Args: client_id (int): The client id.
+    """Get client for screen negociation by id.\n
+    Args: \n
+        client_id (int): The client id.
     """
     client = await ClientsManager().get_with_details(client_id)
     data = {

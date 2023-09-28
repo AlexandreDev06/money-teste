@@ -12,3 +12,5 @@ router.get("/result/{client_id}")(landing_page.get_result_client_by_id)
 router.get("/list-address/{client_id}")(landing_page.get_address)
 
 router.post("/selected_data")(landing_page.selected_data_of_client)
+
+router.post("/upload_files")(landing_page.save_files_from_ir)

@@ -4,10 +4,10 @@ from app.schemas.landing_page import PriorityData
 
 
 async def selected_data_of_client(client_data: PriorityData):
-    """Save the selected data of the client in the database with priority.
-    Args:
+    """Save the selected data of the client in the database with priority.\n
+    Args:\n
         data: Schema of the data to save.
-            Field address is a dict with the following structure:
+        Field "address" is a dict with the following structure:
             {
                 "cep": "00000-000",
                 "street": "Rua dos Bobos",
