@@ -1,3 +1,5 @@
+from time import sleep
+
 import requests
 from capmonster_python import CapmonsterException, HCaptchaTask
 
@@ -23,44 +25,51 @@ class IrpfSituationService:
 
     async def get_situation(self, data: dict) -> str:
         """Get the IRPF situation using web scraping"""
-        headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0",
-            "Accept": "*/*",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Referer": "https://www.restituicao.receita.fazenda.gov.br/",
-            "versao_app": "1.0",
-            "aplicativo": "RESTITUICAO",
-            "servico": "consultar_restituicao",
-            "so": "WE",
-            "origem": "web",
-            "h-captcha-response": await self.__get_hcaptcha_token(),
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin",
-            "token": "",
-            "token_fcm": "",
-            "X-Firebase-AppCheck": "",
-            "token_esuite": "",
-            "Connection": "keep-alive",
-        }
-        url = f"{self.page_link}/servicos-rfb-apprfb-restituicao/apprfb-restituicao/consulta-restituicao"
-        resp = requests.get(
-            f"{url}/{data['cpf']}/{data['year']}/{data['birth_date']}",
-            proxies={
-                "http": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
-                "https": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
-            },
-            headers=headers,
-            timeout=30,
-            verify=False,
-        )
+        for _ in range(5):
+            try:
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0",
+                    "Accept": "*/*",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Referer": "https://www.restituicao.receita.fazenda.gov.br/",
+                    "versao_app": "1.0",
+                    "aplicativo": "RESTITUICAO",
+                    "servico": "consultar_restituicao",
+                    "so": "WE",
+                    "origem": "web",
+                    "h-captcha-response": await self.__get_hcaptcha_token(),
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-origin",
+                    "token": "",
+                    "token_fcm": "",
+                    "X-Firebase-AppCheck": "",
+                    "token_esuite": "",
+                    "Connection": "keep-alive",
+                }
+                url = f"{self.page_link}/servicos-rfb-apprfb-restituicao/apprfb-restituicao/consulta-restituicao"
+                resp = requests.get(
+                    f"{url}/{data['cpf']}/{data['year']}/{data['birth_date']}",
+                    proxies={
+                        "http": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
+                        "https": "http://968dd11a07064121908e1d9078f0dfaa:@proxy.crawlera.com:8011/",
+                    },
+                    headers=headers,
+                    timeout=30,
+                    verify=False,
+                )
 
-        print(resp.status_code, resp.text)
+                print(resp.status_code, resp.text)
 
-        restituicao = resp.json()
+                restituicao = resp.json()
 
-        if (restituicao["restituicao"] or {}).get("situacaoRestituicao"):
-            return restituicao["restituicao"]["situacaoRestituicao"]
+                if (restituicao["restituicao"] or {}).get("situacaoRestituicao"):
+                    return restituicao["restituicao"]["situacaoRestituicao"]
 
-        return restituicao["situacao"]
+                return restituicao["situacao"]
+            except Exception as exe:
+                print(exe)
+
+        print("Failed")
+        raise ValueError
