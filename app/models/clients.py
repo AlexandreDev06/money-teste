@@ -101,6 +101,7 @@ class Client(Base):
     email_sended_at = Column(DateTime(timezone=True))
     registration_status = Column(Enum(ClientRegistrationStatus))
     pipeline_status = Column(Enum(ClientPipelineStatus), default="ENTRY")
+    signed_contract = Column(String)
 
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

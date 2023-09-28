@@ -56,7 +56,6 @@ class ClientOperation(Base):
     previd_official = Column(Integer)
     tax_received = Column(Float)
     search_irpf_status = Column(Enum(ClientOperationSearchIrpfStatus))
-    is_signed = Column(Boolean, default=False)
     sended_fill_ir_at = Column(DateTime(timezone=True))
     filled_ir_at = Column(DateTime(timezone=True))
     irpf_image = Column(String)

@@ -22,3 +22,11 @@ class UpdateImages(BaseModel):
         "ir_2020": {"file_name": "imagem.png", "file": "image/base64"},
         "ir_2019": {"file_name": "imagem.png", "file": "image/base64"},
     }
+
+
+class WebhookSignedContract(BaseModel):
+    """Webhook signed contract"""
+
+    signed_file: str
+    name: str
+    external_id: str
