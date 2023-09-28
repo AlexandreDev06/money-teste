@@ -3,6 +3,7 @@ from sqlalchemy.orm import joinedload
 
 from app.configs.database import DBConnection
 from app.models import Client, Operation
+from app.models.client_operations import ClientOperation
 from app.models.clients import ClientPipelineStatus as PipelineStatus
 from app.models.timelines import Timeline, TimelineSource
 
@@ -210,10 +211,13 @@ class ClientsManager:
             try:
                 query = (
                     select(Client)
+                    .options(
+                        joinedload(Client.client_operations)
+                    )
                     .where(Client.pipeline_status == None)
                     .where(Client.operation_id == None)
                 )
-                return conn.session.scalars(query).all()
+                return conn.session.scalars(query).unique().all()
             except Exception as exe:
                 conn.session.rollback()
                 print(exe)
