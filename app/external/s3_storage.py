@@ -12,11 +12,7 @@ class RemoteStorage:
         )
 
     # Save the file in the storage
-    async def save_base64(
-        self,
-        file_data: str,
-        file_name: str,
-    ):
+    async def save_base64(self, file_data: str, file_name: str):
         """Save the file in the S3 bucket"""
         s3_client = await self.__aws_instance()
         bucket = settings.aws_bucket_name
@@ -25,8 +21,8 @@ class RemoteStorage:
             s3_client.put_object(
                 Bucket=bucket, Key=file_name, Body=file_data, ContentType="image/jpeg"
             )
-        except Exception as e:
-            print(e)
+        except Exception as exe:
+            print(exe)
             return False
 
         return f"https://{bucket}.s3.amazonaws.com/{file_name}"
@@ -51,6 +47,6 @@ class RemoteStorage:
                 ExpiresIn=expire_in_minutes * 60,
             )
             return link
-        except Exception as e:
-            print(e)
+        except Exception as exe:
+            print(exe)
             return None

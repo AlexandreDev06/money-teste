@@ -23,7 +23,7 @@ class Zapsign:
             "sandbox": not is_prod,
             "template_id": "bce3495a-c6d4-4258-8935-94344164b591",
             "signer_name": data["name"],
-            "external_id": f"recdinirpf-{data['client_id']}",
+            "external_id": f"recdinmoney-{data['client_id']}",
             "send_automatic_email": True,
             "data": [
                 {"de": "{{NOME COMPLETO}}", "para": data["name"]},
