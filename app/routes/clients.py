@@ -10,6 +10,8 @@ router.post("/send-contract/{client_id}")(clients.send_contract)
 
 router.get("/pipeline")(clients.get_pipeline_cards)
 
+router.get("/pending_clients")(clients.get_pending_clients)
+
 router.get("/show/{client_id}")(clients.get_client_by_id)
 
 router.get("/{stage}")(clients.get_list_of_clients)

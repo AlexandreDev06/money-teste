@@ -203,3 +203,17 @@ class ClientsManager:
             except Exception as exe:
                 conn.session.rollback()
                 print(exe)
+
+    async def get_pending_clients(self):
+        """Get all clients that don't have any pipeline status associated."""
+        with DBConnection() as conn:
+            try:
+                query = (
+                    select(Client)
+                    .where(Client.pipeline_status == None)
+                    .where(Client.operation_id == None)
+                )
+                return conn.session.scalars(query).all()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
