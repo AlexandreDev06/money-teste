@@ -17,3 +17,5 @@ router.post("/send-contract/{client_id}")(clients.send_contract)
 router.post("/webhook-contract")(clients.webhook_contract_signed)
 
 router.put("/update-stage")(clients.update_stage)
+
+router.put("/{client_id}")(clients.update_client)
