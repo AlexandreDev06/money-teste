@@ -14,6 +14,8 @@ router.get("/{stage}")(clients.get_list_of_clients)
 
 router.post("/send-contract/{client_id}")(clients.send_contract)
 
+router.post("/deactivate/{client_id}")(clients.deactivate_client)
+
 router.post("/webhook-contract")(clients.webhook_contract_signed)
 
 router.put("/update-stage")(clients.update_stage)
