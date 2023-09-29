@@ -72,4 +72,3 @@ class IrpfSituationService:
                 print(exe)
 
         print("Failed")
-        raise ValueError

@@ -45,29 +45,37 @@ async def start_check_eligibility(_, motor_id: int):
 @run_func_async()
 async def check_eligibility(_, data_client: dict):
     """Job that will manage all clients able to be enriched."""
-    motor = await MotorRunningsManager().get(data_client["motor_id"])
-
-    if motor.status == Mrs.PAUSED:
-        return "Motor running paused"
-
     date_now = datetime.now().year
     list_clients_operation = []
+    client = await ClientsManager().get_with_details(data_client["id"])
+    years_eligibility = [co.year for co in client.client_operations]
+    print(years_eligibility)
+
+    if data_client["motor_id"]:
+        motor = await MotorRunningsManager().get(data_client["motor_id"])
+
+        if motor.status == Mrs.PAUSED:
+            return "Motor running paused"
+
     for i in range(5):
+        if date_now - i in years_eligibility:
+            continue
+
         data = {
             "cpf": data_client["cpf"],
             "year": date_now - i,
             "birth_date": data_client["birth_date"],
         }
         client_res = await IrpfSituationService().get_situation(data)
-
-        list_clients_operation.append(
-            {
-                "client_id": data_client["id"],
-                "year": data["year"],
-                "irpf_situation": client_res,
-                "search_irpf_status": Cois.SUCCESS,
-            }
-        )
+        if client_res:
+            list_clients_operation.append(
+                {
+                    "client_id": data_client["id"],
+                    "year": data["year"],
+                    "irpf_situation": client_res,
+                    "search_irpf_status": Cois.SUCCESS,
+                }
+            )
 
     await ClientOperationsManager().add_multiple(list_clients_operation)
     await ClientsManager().update(
