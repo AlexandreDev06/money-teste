@@ -21,3 +21,5 @@ router.post("/webhook-contract")(clients.webhook_contract_signed)
 router.post("/eligibility/{client_id}")(clients.check_eligibility_client)
 
 router.put("/update-stage")(clients.update_stage)
+
+router.put("/{client_id}")(clients.update_client)
