@@ -10,12 +10,13 @@ async def get_pipeline_cards(
     order_by: str = "created_at",
     order: str = "ASC",
     source: str = "DIRF,SPREADSHEET,LANDING_PAGE",
+    is_30_days: bool = False,
     _=Depends(validate_token),
 ):
     """Get all stages and their clients for use in pipeline view."""
     source = source.split(",")
     clients = await ClientsManager().get_pipeline_clients(
-        page, per_page, order_by, order, source
+        page, per_page, order_by, order, source, is_30_days
     )
     next = None
     for i in clients:

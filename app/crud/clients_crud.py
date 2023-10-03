@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.orm import joinedload
 
@@ -108,9 +110,11 @@ class ClientsManager:
         order_by: str,
         order: str,
         source: list[str],
+        is_30_days: bool
     ) -> dict:
         """Get all clients by pipeline status with pagination"""
         pipeline_clients = {}
+        columns_30_days = ["CONTACT", "WAITING_FILL", "CONTRACT", "WAITING_PAYMENT", "PENDING_DOCS"]
 
         with DBConnection() as conn:
             try:
@@ -129,7 +133,7 @@ class ClientsManager:
                             Client.created_at,
                             Operation.name,
                         )
-                        .join(Client.operation)
+                        .outerjoin(Client.operation)
                         .where(Client.pipeline_status == status)
                         .where(Client.source.in_(source))
                         .limit(per_page)
@@ -140,6 +144,14 @@ class ClientsManager:
                         if order == "DESC"
                         else getattr(Client, order_by).asc()
                     )
+
+                    if is_30_days:
+                        if not status in columns_30_days:
+                            continue
+
+                        query = query.where(
+                            Client.updated_at <= datetime.now() - timedelta(days=30)
+                        )
                     results = conn.session.execute(query).all()
 
                     for id, name, cpf, created_at, operation_name in results:
