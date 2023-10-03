@@ -18,4 +18,6 @@ router.post("/deactivate/{client_id}")(clients.deactivate_client)
 
 router.post("/webhook-contract")(clients.webhook_contract_signed)
 
+router.post("/eligibility/{client_id}")(clients.check_eligibility_client)
+
 router.put("/update-stage")(clients.update_stage)
