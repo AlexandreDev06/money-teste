@@ -1,10 +1,12 @@
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.orm import joinedload
 
 from app.configs.database import DBConnection
 from app.models import Client, Operation
 from app.models.client_operations import ClientOperation
 from app.models.clients import ClientPipelineStatus as PipelineStatus
+from app.models.notifications import Notification
+from app.models.tasks import Task
 from app.models.timelines import Timeline, TimelineSource
 
 
@@ -211,13 +213,39 @@ class ClientsManager:
             try:
                 query = (
                     select(Client)
-                    .options(
-                        joinedload(Client.client_operations)
-                    )
+                    .options(joinedload(Client.client_operations))
+                    .where(Client.is_active == True)
                     .where(Client.pipeline_status == None)
                     .where(Client.operation_id == None)
                 )
                 return conn.session.scalars(query).unique().all()
+            except Exception as exe:
+                conn.session.rollback()
+                print(exe)
+
+    async def deactive_client(self, client_id: int):
+        """ "Deactivate client by id, deleting timeliens, task, notes and client_operations."""
+        with DBConnection() as conn:
+            query = (
+                update(Client)
+                .where(Client.id == client_id)
+                .values(is_active=False, pipeline_status=None)
+            )
+            timeline_query = delete(Timeline).where(Timeline.client_id == client_id)
+            co_query = delete(ClientOperation).where(
+                ClientOperation.client_id == client_id
+            )
+            notifications_query = delete(Notification).where(
+                Notification.client_id == client_id
+            )
+            tasks_query = delete(Task).where(Task.client_id == client_id)
+            try:
+                conn.session.execute(query)
+                conn.session.execute(timeline_query)
+                conn.session.execute(co_query)
+                conn.session.execute(notifications_query)
+                conn.session.execute(tasks_query)
+                conn.session.commit()
             except Exception as exe:
                 conn.session.rollback()
                 print(exe)
